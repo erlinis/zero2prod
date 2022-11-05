@@ -1,6 +1,6 @@
 //! tests/health_check.rs
 
-use std::{fmt::format, net::TcpListener};
+use std::net::TcpListener;
 
 use sqlx::{Connection, PgConnection};
 use zero2prod::configuration::get_configuration;
@@ -48,7 +48,7 @@ async fn subscribe_returns_a_200_for_valid_form_data() {
 
     assert_eq!(200, response.status().as_u16());
 
-    let saved = sqlx::query!("SELECT email, name FROM subscriptions", )
+    let saved = sqlx::query!("SELECT email, name FROM subscriptions",)
         .fetch_one(&mut connection)
         .await
         .expect("Failed to fetch saved subscription");
