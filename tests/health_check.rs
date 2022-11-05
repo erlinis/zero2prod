@@ -3,6 +3,8 @@
 use std::{fmt::format, net::TcpListener};
 
 use actix_web::Responder;
+use sqlx::{PgConnection, Connection};
+use zero2prod::configuration::get_configuration;
 
 #[tokio::test]
 async fn health_check_works() {
@@ -26,6 +28,13 @@ async fn health_check_works() {
 async fn subscribe_returns_a_200_for_valid_form_data() {
     //Arrange
     let app_address = spawn_app();
+    
+    let configuration = get_configuration().expect("Failed to read config");
+    let connection_string = configuration.database.connection_string();
+
+    
+    let connection = PgConnection::connect(&connection_string).await.expect("Failed to connect to the database");
+
     let client = reqwest::Client::new();
 
     let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
@@ -69,6 +78,7 @@ async fn subscribe_returns_a_400_when_data_is_missing() {
         );
     }
 }
+
 fn spawn_app() -> String {
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
 
@@ -80,3 +90,4 @@ fn spawn_app() -> String {
 
     format!("http://127.0.0.1:{}", port)
 }
+
