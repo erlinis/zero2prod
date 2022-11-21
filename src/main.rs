@@ -6,7 +6,8 @@ use zero2prod::telemetry::{get_tracing_subscriber, init_tracing_susbcriber};
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    let subscriber = get_tracing_subscriber("zero2prod".into(), "info".into());
+    let subscriber = get_tracing_subscriber("zero2prod".into(), "info".into(), std::io::stdout);
+
     init_tracing_susbcriber(subscriber);
 
     //Panic if can;t read the configuration
@@ -20,5 +21,3 @@ async fn main() -> std::io::Result<()> {
 
     run(listener, connection_pool)?.await
 }
-
-
