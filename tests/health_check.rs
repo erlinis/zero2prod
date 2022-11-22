@@ -1,6 +1,7 @@
 //! tests/health_check.rs
 
 use once_cell::sync::Lazy;
+use secrecy::ExposeSecret;
 use std::net::TcpListener;
 
 use sqlx::{Connection, Executor, PgConnection, PgPool};
@@ -133,7 +134,7 @@ async fn spawn_app() -> TestApp {
 pub async fn configurate_database(config: &DatabaseSettings) -> PgPool {
     let create_db_query = format!(r#"CREATE DATABASE "{}";"#, config.database_name);
 
-    let mut connection = PgConnection::connect(&config.connection_string_without_db())
+    let mut connection = PgConnection::connect(&config.connection_string_without_db().expose_secret())
         .await
         .expect("Failed to connect to Postgres.");
 
